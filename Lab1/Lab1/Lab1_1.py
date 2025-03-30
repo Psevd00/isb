@@ -2,7 +2,7 @@ import json
 import os
 import random
 
-from constants import ALPHABET, ENCRYPTED_FILE, INPUT_FILE, KEY_FILE, TASK_DIRECTORY
+from constants import *
 
 
 def generate_key(alphabet):
