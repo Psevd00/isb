@@ -11,9 +11,11 @@ def load_cipher_text(file_path):
     :param file_path: Путь к файлу
     :return: Содержимое файла в виде строки
     """
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
-
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 def load_russian_frequencies(file_path):
     """
@@ -21,8 +23,11 @@ def load_russian_frequencies(file_path):
     :param file_path: Путь к файлу
     :return: Словарь с частотами появления букв
     """
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return json.load(file)
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return json.load(file)
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def analyze_frequency(text):
@@ -31,9 +36,15 @@ def analyze_frequency(text):
     :param text: Исходный текст
     :return: Словарь с частотами появления символов
     """
-    freq_counter = Counter(text)
-    total_chars = sum(freq_counter.values())
-    return {char: count / total_chars for char, count in freq_counter.items()}
+    try:
+        if not text:
+            raise ValueError("Текст не может быть пустым")
+
+        freq_counter = Counter(text)
+        total_chars = sum(freq_counter.values())
+        return {char: count / total_chars for char, count in freq_counter.items()}
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def create_mapping(cipher_freq, russian_freq):
@@ -43,14 +54,20 @@ def create_mapping(cipher_freq, russian_freq):
     :param russian_freq: Частота появления русских букв
     :return: Таблица замены символов
     """
-    sorted_cipher = sorted(cipher_freq.items(), key=lambda x: x[1], reverse=True)
-    sorted_russian = sorted(russian_freq.items(), key=lambda x: x[1], reverse=True)
+    try:
+        if not cipher_freq or not russian_freq:
+            raise ValueError("Частоты символов не могут быть пустыми")
 
-    mapping = {}
-    for (cipher_char, _), (russian_char, _) in zip(sorted_cipher, sorted_russian):
-        if cipher_char not in mapping.values():
-            mapping[cipher_char] = russian_char
-    return mapping
+        sorted_cipher = sorted(cipher_freq.items(), key=lambda x: x[1], reverse=True)
+        sorted_russian = sorted(russian_freq.items(), key=lambda x: x[1], reverse=True)
+
+        mapping = {}
+        for (cipher_char, _), (russian_char, _) in zip(sorted_cipher, sorted_russian):
+            if cipher_char not in mapping.values():
+                mapping[cipher_char] = russian_char
+        return mapping
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def decrypt_text(text, mapping):
@@ -60,7 +77,15 @@ def decrypt_text(text, mapping):
     :param mapping: Таблица замены символов
     :return: Расшифрованный текст
     """
-    return ''.join(mapping.get(char, char) for char in text)
+    try:
+        if not text:
+            raise ValueError("Текст не может быть пустым")
+        if not mapping:
+            raise ValueError("Таблица замены не может быть пустой")
+
+        return ''.join(mapping.get(char, char) for char in text)
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def save_json(data, file_path):
