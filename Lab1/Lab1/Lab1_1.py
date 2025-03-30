@@ -2,7 +2,7 @@ import json
 import os
 import random
 
-from constants import *
+from constants import ALPHABET, ENCRYPTED_FILE, INPUT_FILE, KEY_FILE, TASK_DIRECTORY
 
 
 def generate_key(alphabet):
@@ -11,10 +11,15 @@ def generate_key(alphabet):
     :param alphabet: Строка с алфавитом
     :return: Словарь, где ключ — символ алфавита, значение — случайный символ
     """
-    shuffled_alphabet = list(alphabet)
-    random.shuffle(shuffled_alphabet)
-    return {original: shuffled for original, shuffled in zip(alphabet, shuffled_alphabet)}
+    try:
+        if not alphabet:
+            raise ValueError("Алфавит не может быть пустым")
 
+        shuffled_alphabet = list(alphabet)
+        random.shuffle(shuffled_alphabet)
+        return {original: shuffled for original, shuffled in zip(alphabet, shuffled_alphabet)}
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 def encrypt(text, key):
     """
@@ -23,7 +28,15 @@ def encrypt(text, key):
     :param key: Словарь с ключом шифрования
     :return: Зашифрованный текст
     """
-    return ''.join([key[char] if char in key else char for char in text])
+    try:
+        if not text:
+            raise ValueError("Текст не может быть пустым")
+        if not key:
+            raise ValueError("Ключ не может быть пустым")
+
+        return ''.join([key[char] if char in key else char for char in text])
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def save_encrypted_text(text, file_path):
@@ -32,8 +45,11 @@ def save_encrypted_text(text, file_path):
     :param text: Зашифрованный текст
     :param file_path: Путь к файлу для сохранения
     """
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(text)
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(text)
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def save_key(key, file_path):
@@ -42,26 +58,25 @@ def save_key(key, file_path):
     :param key: Словарь с ключом шифрования
     :param file_path: Путь к файлу для сохранения
     """
-    with open(file_path, 'w', encoding='utf-8') as file:
-        json.dump(key, file, ensure_ascii=False, indent=4)
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            json.dump(key, file, ensure_ascii=False, indent=4)
+    except Exception as e:
+        raise Exception(f"ERROR")
 
 
 def main():
     """
     Основная функция для запуска программы.
     """
-    # Чтение исходного текста
     input_file_path = os.path.join(TASK_DIRECTORY, INPUT_FILE)
     with open(input_file_path, 'r', encoding='utf-8') as file:
         original_text = file.read().upper()
 
-    # Генерация ключа
     key = generate_key(ALPHABET)
 
-    # Шифрование текста
     encrypted_text = encrypt(original_text, key)
 
-    # Сохранение зашифрованного текста и ключа
     encrypted_file_path = os.path.join(TASK_DIRECTORY, ENCRYPTED_FILE)
     save_encrypted_text(encrypted_text, encrypted_file_path)
 
