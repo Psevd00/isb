@@ -2,6 +2,8 @@ import json
 import os
 import random
 
+from constants import ALPHABET, ENCRYPTED_FILE, INPUT_FILE, KEY_FILE, TASK_DIRECTORY
+
 
 def generate_key(alphabet):
     """
@@ -48,28 +50,23 @@ def main():
     """
     Основная функция для запуска программы.
     """
-    # Определяем алфавит
-    alphabet = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ '
-
-    # Определяем пути к файлам
-    task_directory = os.path.join('Task1')
-    input_file = os.path.join(task_directory, 'original_text.txt')
-    encrypted_file = os.path.join(task_directory, 'encrypted_text.txt')
-    key_file = os.path.join(task_directory, 'key.json')
-
     # Чтение исходного текста
-    with open(input_file, 'r', encoding='utf-8') as file:
+    input_file_path = os.path.join(TASK_DIRECTORY, INPUT_FILE)
+    with open(input_file_path, 'r', encoding='utf-8') as file:
         original_text = file.read().upper()
 
     # Генерация ключа
-    key = generate_key(alphabet)
+    key = generate_key(ALPHABET)
 
     # Шифрование текста
     encrypted_text = encrypt(original_text, key)
 
     # Сохранение зашифрованного текста и ключа
-    save_encrypted_text(encrypted_text, encrypted_file)
-    save_key(key, key_file)
+    encrypted_file_path = os.path.join(TASK_DIRECTORY, ENCRYPTED_FILE)
+    save_encrypted_text(encrypted_text, encrypted_file_path)
+
+    key_file_path = os.path.join(TASK_DIRECTORY, KEY_FILE)
+    save_key(key, key_file_path)
 
     print("Текст успешно зашифрован и сохранен.")
 
