@@ -94,8 +94,11 @@ def save_json(data, file_path):
     :param data: Данные для сохранения
     :param file_path: Путь к файлу
     """
-    with open(file_path, 'w', encoding='utf-8') as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)
+     try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
+    except TypeError as e:
+        raise Exception(f"ERROR")
 
 
 def save_text(data, file_path):
@@ -104,9 +107,15 @@ def save_text(data, file_path):
     :param data: Текст для сохранения
     :param file_path: Путь к файлу
     """
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(data)
-
+    try:
+        if not isinstance(data, str):
+            raise ValueError("Данные должны быть строкой")
+            
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(data)
+    except IOError as e:
+        raise Exception(f"ERROR")
+        
 
 def main():
     cipher_text = load_cipher_text(CIPHER_TEXT_PATH)
