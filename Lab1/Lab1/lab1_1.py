@@ -5,6 +5,20 @@ import random
 from constants import ALPHABET, ENCRYPTED_FILE, INPUT_FILE, KEY_FILE, TASK_DIRECTORY
 
 
+def read_file(file_path):
+    """
+    Читает содержимое текстового файла по указанному пути.
+    :param file_path: Путь к файлу
+    :return: Содержимое файла в виде строки
+    """
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except FileNotFoundError:
+        raise Exception(f"Файл не найден: {file_path}")
+    except Exception as e:
+        raise Exception(f"Ошибка при чтении файла: {str(e)}")
+
 def generate_key(alphabet):
     """
     Генерация случайного ключа на основе алфавита.
