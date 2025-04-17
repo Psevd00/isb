@@ -6,10 +6,14 @@ from constants2 import *
 
 
 def load_key(file_path):
-    """Загружает ключ замены из JSON файла"""
+    """
+    Загружает ключ замены из JSON файла.
+    :param file_path: Путь к файлу
+    :return: Содержимое файла в виде строки
+    """
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
-            return json.load(file) 
+            return json.load(file)  # Без инверсии, если формат уже правильный
     except Exception as e:
         raise Exception(f"Error")
 
