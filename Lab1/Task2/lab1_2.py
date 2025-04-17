@@ -5,6 +5,15 @@ from collections import Counter
 from constants2 import *
 
 
+def load_key(file_path):
+    """Загружает ключ замены из JSON файла"""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return json.load(file)  # Без инверсии, если формат уже правильный
+    except Exception as e:
+        raise Exception(f"Error")
+
+
 def load_cipher_text(file_path):
     """
     Читает содержимое текстового файла по указанному пути.
@@ -15,7 +24,8 @@ def load_cipher_text(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             return file.read()
     except Exception as e:
-        raise Exception(f"ERROR")
+        raise Exception(f"Error")
+
 
 def load_russian_frequencies(file_path):
     """
@@ -27,7 +37,7 @@ def load_russian_frequencies(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             return json.load(file)
     except Exception as e:
-        raise Exception(f"ERROR")
+        raise Exception(f"Error")
 
 
 def analyze_frequency(text):
@@ -39,53 +49,27 @@ def analyze_frequency(text):
     try:
         if not text:
             raise ValueError("Текст не может быть пустым")
-
         freq_counter = Counter(text)
         total_chars = sum(freq_counter.values())
         return {char: count / total_chars for char, count in freq_counter.items()}
     except Exception as e:
-        raise Exception(f"ERROR")
+        raise Exception(f"Error")
 
 
-def create_mapping(cipher_freq, russian_freq):
-    """
-    Создаёт сопоставление между символами зашифрованного текста и русского алфавита.
-    :param cipher_freq: Частота появления символов в тексте
-    :param russian_freq: Частота появления русских букв
-    :return: Таблица замены символов
-    """
-    try:
-        if not cipher_freq or not russian_freq:
-            raise ValueError("Частоты символов не могут быть пустыми")
-
-        sorted_cipher = sorted(cipher_freq.items(), key=lambda x: x[1], reverse=True)
-        sorted_russian = sorted(russian_freq.items(), key=lambda x: x[1], reverse=True)
-
-        mapping = {}
-        for (cipher_char, _), (russian_char, _) in zip(sorted_cipher, sorted_russian):
-            if cipher_char not in mapping.values():
-                mapping[cipher_char] = russian_char
-        return mapping
-    except Exception as e:
-        raise Exception(f"ERROR")
-
-
-def decrypt_text(text, mapping):
+def decrypt_with_key(ciphertext, key):
     """
     Расшифровывает текст с использованием созданного сопоставления.
-    :param text: Зашифрованный текст
-    :param mapping: Таблица замены символов
+    :param ciphertext: Зашифрованный текст
+    :param key: Таблица замены символов
     :return: Расшифрованный текст
     """
     try:
-        if not text:
-            raise ValueError("Текст не может быть пустым")
-        if not mapping:
-            raise ValueError("Таблица замены не может быть пустой")
-
-        return ''.join(mapping.get(char, char) for char in text)
+        decrypted = []
+        for char in ciphertext:
+            decrypted.append(key.get(char, char))
+        return ''.join(decrypted)
     except Exception as e:
-        raise Exception(f"ERROR")
+        raise Exception(f"Error")
 
 
 def save_json(data, file_path):
@@ -94,11 +78,8 @@ def save_json(data, file_path):
     :param data: Данные для сохранения
     :param file_path: Путь к файлу
     """
-     try:
-        with open(file_path, 'w', encoding='utf-8') as file:
-            json.dump(data, file, ensure_ascii=False, indent=4)
-    except TypeError as e:
-        raise Exception(f"ERROR")
+    with open(file_path, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 
 def save_text(data, file_path):
@@ -107,35 +88,29 @@ def save_text(data, file_path):
     :param data: Текст для сохранения
     :param file_path: Путь к файлу
     """
-    try:
-        if not isinstance(data, str):
-            raise ValueError("Данные должны быть строкой")
-            
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(data)
-    except IOError as e:
-        raise Exception(f"ERROR")
-        
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(data)
+
 
 def main():
-    cipher_text = load_cipher_text(CIPHER_TEXT_PATH)
-    russian_frequencies = load_russian_frequencies(RUSSIAN_FREQUENCIES_PATH)
+    try:
+        key = load_key(KEY_PATH)
+        cipher_text = load_cipher_text(CIPHER_TEXT_PATH)
+        decrypted_text = decrypt_with_key(cipher_text, key)
+        save_text(decrypted_text, DECRYPTED_TEXT_OUTPUT)
 
-    cipher_frequencies = analyze_frequency(cipher_text)
+        russian_frequencies = load_russian_frequencies(RUSSIAN_FREQUENCIES_PATH)
+        cipher_frequencies = analyze_frequency(decrypted_text)
 
-    cipher_frequencies_sorted = dict(
-        sorted(cipher_frequencies.items(), key=lambda item: (-item[1], item[0]))
-    )
-    save_json(cipher_frequencies_sorted, CIPHER_FREQUENCIES_OUTPUT)
+        cipher_frequencies_sorted = dict(
+            sorted(cipher_frequencies.items(), key=lambda item: (-item[1], item[0]))
+        )
+        save_json(cipher_frequencies_sorted, CIPHER_FREQUENCIES_OUTPUT)
 
-    mapping = create_mapping(cipher_frequencies, russian_frequencies)
-    decrypted_text = decrypt_text(cipher_text, mapping)
+        print(f"Расшифровка завершена. Созданы файлы: {DECRYPTED_TEXT_OUTPUT}")
 
-    save_json(mapping, MAPPING_OUTPUT)
-    save_text(decrypted_text, DECRYPTED_TEXT_OUTPUT)
-
-    print(f"Расшифровка завершена. Файлы: {DECRYPTED_TEXT_OUTPUT}, {MAPPING_OUTPUT}, "
-          f"{CIPHER_FREQUENCIES_OUTPUT}")
+    except Exception as e:
+        print(f"Ошибка: {str(e)}")
 
 
 if __name__ == "__main__":
