@@ -9,7 +9,7 @@ def load_key(file_path):
     """Загружает ключ замены из JSON файла"""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
-            return json.load(file)  # Без инверсии, если формат уже правильный
+            return json.load(file) 
     except Exception as e:
         raise Exception(f"Error")
 
