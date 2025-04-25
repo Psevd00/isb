@@ -1,9 +1,15 @@
 import math
+
 # noinspection PyUnresolvedReferences
 from scipy.special import erfc, gammaincc
 
 
 def frequency_test(sequence):
+    '''
+    Частотный побитовый тест NIST
+    :param sequence: Бинарная строка, состоящая из '0' и '1'
+    :return: P-значение в диапазоне [0, 1].
+    '''
     n = len(sequence)
     s = sum(1 if bit == '1' else -1 for bit in sequence)
     s_abs = abs(s) / math.sqrt(n)
@@ -12,6 +18,11 @@ def frequency_test(sequence):
 
 
 def runs_test(sequence):
+    '''
+    Тест на одинаковые подряд идущие биты
+    :param sequence: Бинарная строка, состоящая из '0' и '1'
+    :return: P-значение в диапазоне [0, 1].
+    '''
     n = len(sequence)
     ones = sequence.count('1')
     prop = ones / n
@@ -29,6 +40,10 @@ def runs_test(sequence):
     return p_value
 
 def load_constants():
+    '''
+    Загружает константы и параметры из файла constants.txt.
+    :return: Словарь
+    '''
     constants = {}
     with open('constants.txt', 'r') as f:
         for line in f:
@@ -43,6 +58,12 @@ PI_VALUES = list(map(float, constants['PI_VALUES'].split(',')))
 
 
 def longest_run_test(sequence, block_size=8):
+    '''
+    Тест на самую длинную последовательность единиц в блоке
+    :param sequence: Бинарная строка, состоящая из '0' и '1'
+    :param block_size: Размер блока для анализа.
+    :return: P-значение в диапазоне [0, 1].
+    '''
     blocks = [sequence[i:i + block_size] for i in range(0, len(sequence), block_size)]
     v = [0, 0, 0, 0]
 
