@@ -4,6 +4,11 @@ constants = load_constants()
 
 
 def test_sequence(file_path):
+    '''
+    Запускает набор тестов NIST для проверки случайности бинарной последовательности из файла.
+    :param file_path: Путь к файлу, содержащему бинарную последовательность
+    :return: Словарь с результатами тестов
+    '''
     with open(file_path, 'r') as f:
         sequence = f.read().strip()
 
@@ -12,6 +17,11 @@ def test_sequence(file_path):
     long_run_p = longest_run_test(sequence)
 
     def is_random(p_value):
+        '''
+        Определяет, является ли последовательность случайной на основе P-значения.
+        :param p_value: Значение P-value из теста (0.0 - 1.0)
+        :return: "Случайное" или "Неслучайное"
+        '''
         return "Случайное" if p_value >= 0.01 else "Неслучайное"
 
     return {
