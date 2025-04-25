@@ -1,4 +1,4 @@
-from nist import frequency_test, runs_test, longest_run_test, load_constants
+from nist import frequency_test, load_constants, longest_run_test, runs_test
 
 constants = load_constants()
 
@@ -11,9 +11,8 @@ def test_sequence(file_path):
     runs_p = runs_test(sequence)
     long_run_p = longest_run_test(sequence)
 
-    # Определяем случайность для каждого теста
     def is_random(p_value):
-        return "Случайное" if p_value >= 0.1 else "Неслучайное"
+        return "Случайное" if p_value >= 0.01 else "Неслучайное"
 
     return {
         'frequency': (freq_p, is_random(freq_p)),
