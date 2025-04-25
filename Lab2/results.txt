@@ -1,9 +1,9 @@
 === C++ Results ===
-Frequency Test: P-value = 0.8575 - Случайное
-Runs Test: P-value = 0.0000 - Неслучайное
-Longest Run Test: P-value = 0.0000 - Неслучайное
+Frequency Test: P-value = 0.4523 - РЎР»СѓС‡Р°Р№РЅРѕРµ
+Runs Test: P-value = 0.0875 - РЎР»СѓС‡Р°Р№РЅРѕРµ
+Longest Run Test: P-value = 0.2156 - РЎР»СѓС‡Р°Р№РЅРѕРµ
 
 === Java Results ===
-Frequency Test: P-value = 1.0000 - Случайное
-Runs Test: P-value = 0.8597 - Случайное
-Longest Run Test: P-value = 0.0000 - Неслучайное
+Frequency Test: P-value = 0.0321 - РЎР»СѓС‡Р°Р№РЅРѕРµ
+Runs Test: P-value = 0.1124 - РЎР»СѓС‡Р°Р№РЅРѕРµ
+Longest Run Test: P-value = 0.0112 - РЎР»СѓС‡Р°Р№РЅРѕРµ
