@@ -1,0 +1,6 @@
+PI_VALUES = 0.2148, 0.3672, 0.2305, 0.1875
+SEQUENCE_CPP_PATH = sequence_cpp.txt
+SEQUENCE_JAVA_PATH = sequence_java.txt
+RESULTS_PATH = results.txt
+SEQUENCE_CPP_PATH = sequence_cpp.txt
+P_VALUE_THRESHOLD = 0.01
