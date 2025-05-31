@@ -7,7 +7,6 @@ from Task.Measuring_time import MeasuringTime
 def find_card_action(settings: dict) -> None:
     """
     Найдите карту по ее хэш-значению, используя параллельную обработку.
-    :return: None
     """ ""
     try:
         bins = settings["bins"]
@@ -30,7 +29,6 @@ def find_card_action(settings: dict) -> None:
 def measure_performance_action(settings: dict) -> None:
     """
     Измеряет эффективность поиска с помощью различных основных показателей.
-    :return: None
     """
 
     try:
@@ -58,7 +56,6 @@ def validate_card_action() -> None:
 def change_settings_action() -> dict:
     """
     Изменение настроек приложения, загрузив новый файл конфигурации.
-    :return:
     """
     new_file = input("\nEnter settings filename (or press Enter to cancel): ")
     if new_file:
