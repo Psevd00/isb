@@ -22,7 +22,6 @@ class Luhn:
         """
         Вывод результатов алгоритма Луна
         :param num_card:номер карты
-        :return: None
         """
         if Luhn.alg_luhn(num_card):
             print("This card number is valid")
