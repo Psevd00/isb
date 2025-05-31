@@ -11,7 +11,7 @@ class FindCard:
         """
         Хэширует указанную строку.
         :param num: номер карты
-        :return:хэш
+        :return: полученный хэш
         """
         return hashlib.sha1(num.encode()).hexdigest()
 
@@ -27,7 +27,7 @@ class FindCard:
     def find_card_parallel(bins: list[str], last_digits: str, target_hash: str, cores: int) -> str:
         """
         Поиск подходящего номера карты с помощью многопроцессорной обработки.
-        :return: Номер найденной карточки
+        :return: номер найденной карточки
         """
         total_range = 10**6
         chunk_size = total_range // cores
@@ -69,7 +69,6 @@ class FindCard:
     def serialization_res(bins: list[str], last_digits: str, target_hash: str, cores: int, filepath: str) -> None:
         """
         Сериализует номер найденной карточки.
-        :return: None
         """
         try:
             res = FindCard.find_card_parallel(bins, last_digits, target_hash, cores)
