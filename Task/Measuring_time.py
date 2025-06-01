@@ -1,7 +1,7 @@
 import time
+import matplotlib.pyplot as plt
 
 from .Find_card import FindCard
-
 
 
 class MeasuringTime:
@@ -38,11 +38,9 @@ class MeasuringTime:
         col_width = max(len(str(x)) for row in data for x in row) + 2
         header_width = max(len(h) for h in headers) + 2
 
-        # Создаем строку с заголовками
         table = f"{headers[0]:<{header_width}} {headers[1]:<{col_width}}\n"
         table += "-" * (header_width + col_width) + "\n"
 
-        # Добавляем данные
         for processes, exec_time in data:
             table += f"{processes:<{header_width}} {exec_time:<{col_width}.4f}\n"
 
@@ -64,7 +62,6 @@ class MeasuringTime:
         print(MeasuringTime._format_table(time_res))
         print(f"Лучший результат: {best_result[0]} процессов, {best_result[1]:.4f} сек")
 
-        # Сохраняем в файл
         with open("time_results.txt", "w", encoding="utf-8") as f:
             f.write("Результаты измерений времени:\n")
             f.write(MeasuringTime._format_table(time_res))
@@ -73,7 +70,29 @@ class MeasuringTime:
     @staticmethod
     def plot_time(time_res: list[tuple[int, float]]) -> None:
         """
-        Альтернатива графику - вывод таблицы с результатами
+        Строит график зависимости времени выполнения от количества процессов
         :param time_res: результаты измерений
         """
-        MeasuringTime.print_time_results(time_res)
+        if not time_res:
+            print("Нет данных для построения графика")
+            return
+
+        processes = [x[0] for x in time_res]
+        times = [x[1] for x in time_res]
+        best_idx = times.index(min(times))
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(processes, times, 'bo-', label='Время выполнения')
+        plt.plot(processes[best_idx], times[best_idx], 'ro', label='Лучший результат')
+
+        plt.title('Зависимость времени выполнения от количества процессов')
+        plt.xlabel('Количество процессов')
+        plt.ylabel('Время (секунды)')
+        plt.grid(True)
+        plt.xticks(processes)
+        plt.legend()
+
+        plt.tight_layout()
+        plt.savefig('performance_graph.png')
+        print("\nГрафик сохранен в файл 'performance_graph.png'")
+        plt.show()
