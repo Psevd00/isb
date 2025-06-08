@@ -1,34 +1,19 @@
 import hashlib
 import multiprocessing as mp
+from .Operations import JsonOperations
 
-from .Operations import write_json
 
-
-class FindCard:
-
+class CardFinder:
     @staticmethod
     def hashing_num(num: str) -> str:
-        """
-        Хэширует указанную строку.
-        :param num: номер карты
-        :return: полученный хэш
-        """
         return hashlib.sha1(num.encode()).hexdigest()
 
     @staticmethod
     def number_of_cores() -> int:
-        """
-        Определяет доступное количество процессов.
-        :return: количество процессов
-        """
         return mp.cpu_count()
 
-    @staticmethod
-    def find_card_parallel(bins: list[str], last_digits: str, target_hash: str, cores: int) -> str:
-        """
-        Поиск подходящего номера карты с помощью многопроцессорной обработки.
-        :return: номер найденной карточки
-        """
+    def find_card_parallel(self, bins: list[str], last_digits: str, target_hash: str, cores: int = None) -> str:
+        cores = cores or self.number_of_cores()
         total_range = 10**6
         chunk_size = total_range // cores
 
@@ -40,7 +25,7 @@ class FindCard:
                     end = start + chunk_size if i != cores - 1 else total_range
                     results.append(
                         pool.apply_async(
-                            FindCard.generate_cards_hash,
+                            self.generate_cards_hash,
                             (bin, last_digits, start, end, target_hash),
                         )
                     )
@@ -49,29 +34,20 @@ class FindCard:
                 if found:
                     pool.terminate()
                     return found[0]
-
         return None
 
     @staticmethod
     def generate_cards_hash(bin: str, last_digits: str, start: int, end: int, hash: str) -> tuple[str, str]:
-        """
-        Генерация номера карт в указанном диапазоне.
-        :return: рандомный хэш
-        """
         for middle in range(start, end):
             card = f"{bin}{middle:06}{last_digits}"
-            rand_hash = FindCard.hashing_num(card)
+            rand_hash = CardFinder.hashing_num(card)
             if rand_hash == hash:
                 return card, rand_hash
         return None
 
-    @staticmethod
-    def serialization_res(bins: list[str], last_digits: str, target_hash: str, cores: int, filepath: str) -> None:
-        """
-        Сериализует номер найденной карточки.
-        """
+    def serialization_res(self, bins: list[str], last_digits: str, target_hash: str, filepath: str) -> None:
         try:
-            res = FindCard.find_card_parallel(bins, last_digits, target_hash, cores)
-            write_json(filepath, {"card_number": res})
+            res = self.find_card_parallel(bins, last_digits, target_hash)
+            JsonOperations.write(filepath, {"card_number": res})
         except Exception as exc:
             raise Exception(f"Error serializing private key: {exc}")
