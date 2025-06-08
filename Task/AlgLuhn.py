@@ -1,12 +1,6 @@
-class Luhn:
-
+class LuhnValidator:
     @staticmethod
-    def alg_luhn(num_card: str) -> bool:
-        """
-        Алгоритм Луна
-        :param num_card: номер карты
-        :return: true или false
-        """
+    def validate(num_card: str) -> bool:
         total = 0
         for i, digit in enumerate(reversed(num_card)):
             num = int(digit)
@@ -18,12 +12,8 @@ class Luhn:
         return total % 10 == 0
 
     @staticmethod
-    def print_res(num_card: str) -> None:
-        """
-        Вывод результатов алгоритма Луна
-        :param num_card:номер карты
-        """
-        if Luhn.alg_luhn(num_card):
+    def print_result(num_card: str) -> None:
+        if LuhnValidator.validate(num_card):
             print("This card number is valid")
         else:
             print("This card number is not valid")
